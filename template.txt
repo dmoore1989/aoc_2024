@@ -1,0 +1,5 @@
+require_relative "aoc_helper"
+
+f = File.open("day_FOO.txt") 
+#f = File.open("sample.txt")
+output = f.readlines().map(&:chomp)
