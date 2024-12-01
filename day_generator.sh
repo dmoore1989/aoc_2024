@@ -22,6 +22,5 @@ touch day_"${DAY}"_1.rb
 cat template.txt > day_"${DAY}"_1.rb
 sed -i '' "s/FOO/$DAY/g" day_"${DAY}"_1.rb
 touch day_"${DAY}"_2.rb
-cat template.txt > day_"${DAY}"_2.rb
 sed -i '' "s/FOO/$DAY/g" day_"${DAY}"_2.rb
 open -a /Applications/Google\ Chrome.app https://www.adventofcode.com/2024/day/${DAY}
