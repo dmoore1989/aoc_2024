@@ -23,3 +23,7 @@ def map_array_counts(array)
   end
   hash
 end
+
+def print_helper(string, values)
+  puts("#{string} : #{values}")
+end
