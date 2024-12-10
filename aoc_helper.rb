@@ -24,6 +24,15 @@ def map_array_counts(array)
   hash
 end
 
-def print_helper(string, values)
+def ph(string, *values)
   puts("#{string} : #{values}")
+end
+
+def pg(grid, &block)
+  grid.each_index do |i|
+    print("\n")
+    grid[i].each_char.with_index do |_, j|
+      block.call(i, j)
+    end
+  end
 end
