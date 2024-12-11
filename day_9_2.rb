@@ -1,8 +1,10 @@
 require_relative 'aoc_helper'
 
-# f = File.open('day_9.txt')
-f = File.open('sample.txt')
+f = File.open('day_9.txt')
+# f = File.open('sample.txt')
+
 output = f.readlines.map(&:chomp)
+# output = ['2333133121414131402']
 
 disk = []
 id = 0
@@ -19,37 +21,35 @@ output[0].each_char.with_index do |c, i|
   end
 end
 
-ph('disk', disk)
+# ph('disk', disk)
 pointer = disk.length - 1
-file = [disk[pointer]]
-disk[pointer] = nil
-pointer -= 1
+current_id = disk[pointer]
+file = []
 while pointer >= 0
   char = disk[pointer]
-
-  if file[0] != char
-    pointer_2 = 0
-    until file.empty?
-      if disk[pointer_2...pointer_2 + file.length] == [nil] * file.length
-        file.length.times do
-          disk[pointer_2] = file[0]
-          pointer_2 += 1
+  if char != current_id
+    file_pointer = 0
+    until file.empty? || disk[file_pointer + (file.length - 1)] == current_id
+      if disk[file_pointer...file_pointer + file.length] == [nil] * file.length
+        file.length.times do |x|
+          disk[pointer + x + 1] = nil
         end
-        disk[pointer_2] = file[0]
-        file = []
+        until file.empty?
+          disk[file_pointer] = file.pop
+          file_pointer += 1
+        end
       end
-      pointer_2 += 1
+      file_pointer += 1
     end
-    pointer -= 1 while disk[pointer].nil?
-    file = [disk[pointer]]
-    disk[pointer] = nil
-    pointer -= 1
+    file = []
+    current_id -= 1
+    pointer -= 1 until disk[pointer] == current_id
+    file << disk[pointer]
   else
     file << char
-    disk[pointer] = nil
-    pointer -= 1
   end
-  ph('disk', disk, file, pointer)
+  pointer -= 1
+  # ph('disk', disk, file, pointer)
 end
 
 checksum = 0
