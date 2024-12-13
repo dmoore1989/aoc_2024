@@ -3,8 +3,8 @@
 MOVEMENTS = [
   [0, 1],
   [1, 0],
-  [-1, 0],
   [0, -1],
+  [-1, 0],
   [1, -1],
   [-1, -1],
   [1, 1],
@@ -30,9 +30,9 @@ end
 
 def pg(grid, &block)
   grid.each_index do |i|
-    print("\n")
-    grid[i].each_char.with_index do |_, j|
+    grid[i].each_with_index do |_, j|
       block.call(i, j)
     end
+    print('\n')
   end
 end
