@@ -17,7 +17,6 @@ def traverse_grid(grid, position)
 
   while true
     visited_positions.add(position)
-    # print_helper('movement', [movements, turns[turn_index], movements[turns[turn_index]]])
     next_step = [position[0] + movements[turns[turn_index]][0], position[1] + movements[turns[turn_index]][1]]
     if outside_of_array?(next_step[0], grid.length) || outside_of_array?(next_step[1], grid[0].length)
       return visited_positions

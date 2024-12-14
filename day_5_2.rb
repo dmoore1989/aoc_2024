@@ -33,7 +33,6 @@ def sort_manual(manual, rules)
       i += 1
     end
   end
-  print_helper('manual', manual)
   manual[manual.length / 2]
 end
 

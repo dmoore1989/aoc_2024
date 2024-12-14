@@ -49,9 +49,9 @@ while pointer >= 0
     file << char
   end
   pointer -= 1
-  # ph('disk', disk, file, pointer)
 end
 
+ph('disk', disk)
 checksum = 0
 disk.each_with_index do |space, i|
   checksum += i * (space || 0)
