@@ -11,6 +11,13 @@ MOVEMENTS = [
   [-1, 1]
 ].freeze
 
+MOVEMENT_MAPPING = {
+  '^' => [-1, 0],
+  '>' => [0, 1],
+  'v' => [1, 0],
+  '<' => [0, -1]
+}.freeze
+
 def outside_of_array?(index, length)
   index.negative? || index >= length
 end
@@ -33,6 +40,6 @@ def pg(grid, &block)
     grid[i].each_with_index do |_, j|
       block.call(i, j)
     end
-    print('\n')
+    print("\n")
   end
 end
