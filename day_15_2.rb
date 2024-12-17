@@ -1,7 +1,7 @@
 require_relative 'aoc_helper'
 
 f = File.open('day_15.txt')
-f = File.open('sample.txt')
+# f = File.open('sample.txt')
 output = f.readlines.map(&:chomp)
 
 grid = []
@@ -24,7 +24,7 @@ output.each_with_index do |line, i|
       when '@'
         grid[-1] << '@'
         grid[-1] << '.'
-        point = [i * 2, j]
+        point = [i, j * 2]
       else
         grid[-1] << '.'
         grid[-1] << '.'
@@ -38,7 +38,7 @@ end
 def move_point(point, instruction, grid)
   movement = MOVEMENT_MAPPING[instruction]
   check_point_layers = [[point]]
-  new_check_points = []
+  new_check_points = Set.new
   has_new_check_points = true
   while has_new_check_points
     has_new_check_points = false
@@ -48,30 +48,39 @@ def move_point(point, instruction, grid)
 
       next if grid[new_check_point[0]][new_check_point[1]] == '.'
 
-      new_check_points << new_check_point
+      new_check_points.add(new_check_point)
       next unless ['v', '^'].include?(instruction)
 
-      new_check_points << if grid[check_point[0]][check_point[1]] == ']'
-                            [check_point[0], check_point[1] - 1]
-                          else
-                            [check_point[0], check_point[1] + 1]
-                          end
+      if grid[new_check_point[0]][new_check_point[1]] == ']'
+        new_check_points.add([new_check_point[0], new_check_point[1] - 1])
+      else
+        new_check_points.add([new_check_point[0], new_check_point[1] + 1])
+      end
     end
 
     unless new_check_points.empty?
       check_point_layers << new_check_points
       has_new_check_points = true
     end
-    new_check_points = []
+    # ph('check_point_length', check_point_layers)
+    new_check_points = Set.new
   end
 
-  ph('check_point_layers', check_point_layers)
+  check_point_layers.reverse.each do |check_point_layer|
+    check_point_layer.each do |check_point|
+      place_holder = grid[check_point[0]][check_point[1]]
+      grid[check_point[0]][check_point[1]] = grid[check_point[0] + movement[0]][check_point[1] + movement[1]]
+      grid[check_point[0] + movement[0]][check_point[1] + movement[1]] = place_holder
+    end
+  end
+
+  [point[0] + movement[0], point[1] + movement[1]]
 end
 
 instructions.each_char.with_index do |instruction, t|
   # ph('point', point)
-  point = move_point(point, instruction, grid)
   # ph('move', instruction, point)
+  point = move_point(point, instruction, grid)
   # pg(grid) { |i, j| print(grid[i][j]) }
 end
 
