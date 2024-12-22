@@ -1,7 +1,7 @@
 require_relative 'aoc_helper'
 
 f = File.open('day_20.txt')
-f = File.open('sample20.txt')
+# f = File.open('sample20.txt')
 output = f.readlines.map(&:chomp)
 
 startpoint = []
@@ -18,9 +18,8 @@ end
 
 CHEAT_MOVEMENTS = [[1, 1], [1, -1], [-1, 1], [-1, -1], [2, 0], [-2, 0], [0, 2], [0, -2]].freeze
 
-ph('this is the beginning of the end', startpoint, endpoint)
 def run_maze(startpoint, endpoint, grid, cheat_time)
-  ph('run this maze', startpoint, endpoint, cheat_time)
+  # ph('run this maze', startpoint, endpoint, cheat_time)
   visited_points = Set.new
   movements = MOVEMENTS[0..3]
   queue = [[startpoint, 0, []]]
@@ -43,18 +42,19 @@ def run_maze(startpoint, endpoint, grid, cheat_time)
     end
   end
   if point[1] == cheat_time
-    lowest_maze = nil
+    mazes = []
     CHEAT_MOVEMENTS.each do |cheat_movement|
       new_point = [point[0][0] + cheat_movement[0], point[0][1] + cheat_movement[1]]
-      next if outside_of_array?(new_point[0], grid.length) || outside_of_array?(new_point[1], grid[0].length)
+      next if outside_of_array?(new_point[0], grid.length) ||
+              outside_of_array?(new_point[1], grid[0].length) || grid[new_point[0]][new_point[1]] == '#'
 
       value = run_maze(new_point, endpoint, grid, -2)
       next if value.nil?
 
-      lowest_maze = value if lowest_maze.nil? || lowest_maze > value
+      mazes << value
     end
 
-    point[1] + lowest_maze
+    mazes.map { |maze| point[1] + 2 + maze }
   elsif point[0] == endpoint
     point[1]
   else
@@ -63,11 +63,19 @@ def run_maze(startpoint, endpoint, grid, cheat_time)
 end
 
 time = run_maze(startpoint, endpoint, grid, -2)
-
+ph('time', time)
 items = {}
 time.times do |picosecond|
-  item = run_maze(startpoint, endpoint, grid, picosecond)
-  items[time - item] ||= 0
-  items[time - item] += 1
+  ph('pico', picosecond)
+  mazes = run_maze(startpoint, endpoint, grid, picosecond)
+  mazes.each do |item|
+    items[time - item] ||= 0
+    items[time - item] += 1
+  end
 end
-ph('items!', items)
+
+x = 0
+items.each do |saving, count|
+  x += count if saving >= 100
+end
+puts(x)
