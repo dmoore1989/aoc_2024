@@ -40,7 +40,7 @@ def traverse(point, next_point, grid)
       queue << [new_point, current_point[1] + [movement]]
     end
   end
-  current_point[1].permutation.map { |x| x.join + 'A' }
+  current_point[1].permutation.map { |x| x.join + 'A' }.uniq
 end
 
 numpad_moves = {}
@@ -77,40 +77,43 @@ KEYPAD.each_with_index do |line, i|
 end
 
 output.each do |line|
-  movement_strings = ['']
+  movement_strings = Set.new([''])
   it_line = 'A' + line
   it_line.each_char.with_index do |c, i|
     next if i >= it_line.length - 1
 
     moves = numpad_moves[it_line[i]][it_line[i + 1]]
-    new_movement_strings = []
+    new_movement_strings = Set.new
     movement_strings.each do |movement_string|
       moves.each do |move|
-        new_movement_strings << movement_string + move
+        new_movement_strings.add(movement_string + move)
       end
     end
-    movement_strings = new_movement_strings.uniq
-    ph('movement_strings', movement_strings)
+    movement_strings = new_movement_strings
   end
+  ph('movement_strings', movement_strings)
+  strings = Set.new
   2.times do
-    it_lines = movement_strings.map { |movement_string| 'A' + movement_string }
-    movement_strings = ['']
-    it_lines.each do |it_lineb|
-      it_lineb.each_char.with_index do |c, i|
-        next if i >= it_lineb.length - 1
+    total_set = Set.new
+    movement_strings.each do |movement_string|
+      next_string = 'A' + movement_string
+      new_set = Set.new([''])
+      next_string.each_char.with_index do |mc, i|
+        next if i >= next_string.length - 1
 
-        moves = keypad_moves[it_lineb[i]][it_lineb[i + 1]]
-
-        new_movement_strings = []
-        movement_strings.each do |movement_string|
+        moves = keypad_moves[next_string[i]][next_string[i + 1]]
+        next_set = Set.new
+        new_set.each do |item|
           moves.each do |move|
-            new_movement_strings << movement_string + move
+            next_set.add(item + move)
           end
         end
-        movement_strings = new_movement_strings.uniq
-        puts(movement_strings.count)
+        new_set = next_set
       end
+      total_set += new_set
     end
+    movement_strings = total_set
+    ph('total_set', movement_strings.count)
   end
 end
 
@@ -129,3 +132,22 @@ end
 #   "<"=>{"^"=>">^A", "A"=>">^>A", "<"=>"A", "v"=>">A", ">"=>">>A"},
 #   "v"=>{"^"=>"^A", "A"=>"^>A", "<"=>"<A", "v"=>"A", ">"=>">A"},
 #   ">"=>{"^"=>"^<A", "A"=>"^A", "<"=>"<<A", "v"=>"<A", ">"=>"A"}}
+# it_lines = movement_strings.map { |movement_string| 'A' + movement_string }
+# it_lines.each do |it_lineb|
+#   it_lineb.each_char.with_index do |c, i|
+#     ph('counts', it_lineb.length, i)
+#     next if i >= it_lineb.length - 1
+#
+#     moves = keypad_moves[it_lineb[i]][it_lineb[i + 1]]
+#
+#     new_movement_strings = []
+#     movement_strings.each do |movement_string|
+#       moves.each do |move|
+#         new_movement_strings << movement_string + move
+#       end
+#     end
+#
+#     movement_strings = new_movement_strings
+#     ph('movement_counts', movement_strings.count)
+#   end
+# end
